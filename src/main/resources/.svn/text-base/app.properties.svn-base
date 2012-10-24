@@ -1,0 +1,4 @@
+metadata.db.connection.driver_class=${metadata.db.connection.driver_class}
+metadata.db.connection.url=${metadata.db.connection.url}
+metadata.db.connection.username=${metadata.db.connection.username}
+metadata.db.connection.password=${metadata.db.connection.password}
