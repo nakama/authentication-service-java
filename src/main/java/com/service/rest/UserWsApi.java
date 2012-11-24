@@ -62,7 +62,7 @@ public class UserWsApi {
 	
 	
 	@GET
-	@Path("delete/{username}")
+	@Path("delete")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String delete (@PathParam("username") String username)  {
 		logger.logInfo("delete user");

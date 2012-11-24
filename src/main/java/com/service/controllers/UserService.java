@@ -3,6 +3,7 @@ package com.service.controllers;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import org.mindrot.jbcrypt.BCrypt;
 import com.service.dao.UserDao;
 import com.service.models.User;
@@ -25,7 +26,8 @@ public class UserService {
 		Map<String,String> resp = new HashMap<String,String>();
 		resp.put("name", user.getName());
 		resp.put("email", user.getEmail());
-		
+		resp.put("id", user.getId().toString());
+		resp.put("token", UUID.randomUUID().toString());
 		if (this.hasPasswordChanged(password, user.getPassword()))
 			return ServiceResponse.getSingleObjectResponse(false, "password not match", resp);
 		else 
@@ -48,13 +50,17 @@ public class UserService {
 			
 			User user = new User();
 			String hashedPWD = hashPassword(password);
-			
 			user.setUsername(username);
 			user.setPassword(hashedPWD);
 			user.setEmail(email);
 			user.setName(name);
 			userDao.add(user);
-			return ServiceResponse.getSafeServiceResponse(true, "Success");
+			Map<String,String> resp = new HashMap<String,String>();
+			resp.put("name", user.getName());
+			resp.put("email", user.getEmail());
+			resp.put("id", user.getId().toString());
+			resp.put("token", UUID.randomUUID().toString());
+			return ServiceResponse.getSingleObjectResponse(true, "success", resp);
 		} catch (ServiceException e) {
 			return ServiceResponse.getSafeServiceResponse(false, "failed deleting user");
 		} catch (JSONMapperException e) {
@@ -67,26 +73,48 @@ public class UserService {
 			Map<String,String> req = (Map<String, String>) JSONMapper.toObject(request, Map.class);
 			String username = req.get("username");
 			String password = req.get("password");
+			String token = req.get("token");
+			String id = req.get("id");
+			if (token == null) return ServiceResponse.getSafeServiceResponse(false, "invalid token");
+			if (id == null) return ServiceResponse.getSafeServiceResponse(false, "invalid id");
 			User user = userDao.get(username);
 			if (user == null) return ServiceResponse.getSafeServiceResponse(false, "user not found");
+			if (password != null) {
 			if (this.hasPasswordChanged(password, user.getPassword())){
 				req.put("password", hashPassword(password));
 			}
+			}
 			userDao.update(username, req);
+			Map<String,String> resp = new HashMap<String,String>();
+			resp.put("name", user.getName());
+			resp.put("email", user.getEmail());
+			resp.put("id", user.getId().toString());
+			resp.put("token", UUID.randomUUID().toString());
+			return ServiceResponse.getSingleObjectResponse(true, "success", resp);
+		} catch (ServiceException e) {
+			return ServiceResponse.getSafeServiceResponse(false, "failed deleting user");
+		} catch (JSONMapperException e) {
+			e.printStackTrace();
+			return ServiceResponse.getSafeServiceResponse(false, "invalid request");
+		}
+	}
+	
+	public String delete (String request) {
+		try {
+			Map<String,String> req = (Map<String, String>) JSONMapper.toObject(request, Map.class);
+			String idStr = req.get("id");
+			if (idStr == null) return ServiceResponse.getSingleObjectResponse(false, "id not found", null);
+			BigInteger id = BigInteger.valueOf(Long.parseLong(req.get("id")));
+			String token = req.get("token");
+			if (token == null) return ServiceResponse.getSingleObjectResponse(false, "token not found", null);
+			User user = userDao.get(id);
+			if (user == null) return ServiceResponse.getSafeServiceResponse(false, "user not found");
+			userDao.delete(user);
 			return ServiceResponse.getSafeServiceResponse(true, "success");
 		} catch (ServiceException e) {
 			return ServiceResponse.getSafeServiceResponse(false, "failed deleting user");
 		} catch (JSONMapperException e) {
 			return ServiceResponse.getSafeServiceResponse(false, "invalid request");
-		}
-	}
-	
-	public String delete (String username) {
-		try {
-			userDao.delete(username);
-			return ServiceResponse.getSafeServiceResponse(true, "Success");
-		} catch (ServiceException e) {
-			return ServiceResponse.getSafeServiceResponse(false, "failed deleting user");
 		}
 	}
 	

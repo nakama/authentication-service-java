@@ -12,6 +12,7 @@ public interface UserDao {
 	public void add (Object object) throws ServiceException;
 	public void update (String username, Map<String,String> changes) throws ServiceException;
 	public void delete (String username) throws ServiceException;
+	public void delete (User user) throws ServiceException;
 	public User get (String username) throws ServiceException;
 	public User get (BigInteger id) throws ServiceException;
 }

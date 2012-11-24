@@ -36,6 +36,11 @@ public class MongoDBUserDaoImpl  implements UserDao {
                 Criteria.where("username").is(username)
             ), "user");
 	}
+	
+	@Override
+	public void delete(User user) throws ServiceException {
+		mongoTemplate.remove(user);
+	}
 
 	@Override
 	public User get(String username) throws ServiceException {
