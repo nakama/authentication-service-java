@@ -17,7 +17,7 @@ public class BeanInit {
 	  	
 	public static void init()  {
 		try {
-			String[] configLocations = {"classpath:/spring/redis-beans.xml","classpath:/spring/mongodb-service-dao.xml","classpath:/spring/service-beans.xml"};
+			String[] configLocations = {"classpath:/spring/mongodb-service-dao.xml","classpath:/spring/service-beans.xml"};
 			
 			sContext = new ClassPathXmlApplicationContext(configLocations);
 		} catch (Exception ex) {

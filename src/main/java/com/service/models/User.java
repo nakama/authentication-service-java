@@ -1,6 +1,7 @@
 package com.service.models;
 
 import java.math.BigInteger;
+import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,10 +11,11 @@ public class User {
 	
 	@Id
 	private BigInteger id;
-	private String name;
-	private String email;
 	private String username;
+	private Profile profile;
 	private String password;
+	private Map<String, Map<String,String>> services;
+	
 	
 	public String getUsername() {
 		return username;
@@ -34,19 +36,19 @@ public class User {
 	public void setId(BigInteger id) {
 		this.id = id;
 	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
 	
+	public Profile getProfile() {
+		return profile;
+	}
+	public void setProfile(Profile profile) {
+		this.profile = profile;
+	}
+	public Map<String, Map<String, String>> getServices() {
+		return services;
+	}
+	public void setServices(Map<String, Map<String, String>> services) {
+		this.services = services;
+	}
 	@Override
 	public String toString() {
 		return "User [username=" + username + ", password=" + password + "]";
